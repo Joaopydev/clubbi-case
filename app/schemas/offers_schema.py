@@ -11,4 +11,4 @@ class OfferSchema(BaseModel):
     valid_until: date
 
     class Config:
-        from_attribute = True
+        from_attributes = True
