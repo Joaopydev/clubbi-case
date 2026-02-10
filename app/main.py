@@ -10,14 +10,14 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-from app.routers.carts_router import cart_router
+from app.routers.cart_router import cart_router
 from app.routers.catalog_router import catalog_router
-from app.routers.orders_router import order_router
+from app.routers.checkout_router import order_router
 
 #Include routers
 app.include_router(cart_router, prefix="/api/v1", tags=["Cart"])
 app.include_router(catalog_router, prefix="/api/v1", tags=["Catalog"])
-app.include_router(order_router, prefix="/api/v1", tags=["Orders"])
+app.include_router(order_router, prefix="/api/v1", tags=["Checkout"])
 
 @app.exception_handler(BusinessException)
 async def business_exception_handler(_: Request, exc: BusinessException):
