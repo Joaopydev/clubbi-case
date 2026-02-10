@@ -1,9 +1,21 @@
 from enum import Enum
-from datetime import datetime, timezone
 from decimal import Decimal
+from datetime import (
+    datetime,
+    timezone
+)
 
-from sqlalchemy import Integer, ForeignKey, Enum as SQLEnum, DateTime, Numeric
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    Integer,
+    ForeignKey,
+    Enum as SQLEnum,
+    DateTime,
+    Numeric
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column
+)
 
 from app.db.base import Base
 
@@ -14,9 +26,9 @@ class PaymentStatus(Enum):
     PAID: str = "paid"
 
 
-class Cart(Base):
+class Payment(Base):
 
-    __tablename__ = "carts"
+    __tablename__ = "payments"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey("carts.id"))

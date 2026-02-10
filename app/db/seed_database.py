@@ -8,6 +8,9 @@ from app.db.base import Base
 from app.models.product import Product
 from app.models.client import Client
 from app.models.offer import Offer
+from app.models.cart import Cart
+from app.models.cart_item import CartItem
+from app.models.payment import Payment
 
 def seed_data():
     """Popula o banco com dados de exemplo gerados por IA"""

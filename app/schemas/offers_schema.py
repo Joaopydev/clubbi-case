@@ -1,6 +1,9 @@
 from datetime import date
 from decimal import Decimal
-from pydantic import BaseModel
+from pydantic import (
+    BaseModel,
+    Field,
+)
 
 
 class OfferSchema(BaseModel):
@@ -12,3 +15,8 @@ class OfferSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AddOfferToCart(BaseModel):
+    offer_id: int
+    quantity: int = Field(gt=0, description="Quantity must be greater than zero")

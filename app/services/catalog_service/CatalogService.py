@@ -1,4 +1,7 @@
-from typing import Optional, List
+from typing import (
+    Optional,
+    List,
+)
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -8,6 +11,17 @@ from app.models.client import Client
 from app.models.offer import Offer
 
 class CatalogService:
+
+    """
+    Handles read-only operations related to catalog data.
+
+    Responsibilities:
+    - List available products
+    - List registered customers
+    - Retrieve offers available for a specific client
+
+    This service does not modify data and contains no business state transitions.
+    """
     
     def __init__(self, session: Optional[Session] = None):
 

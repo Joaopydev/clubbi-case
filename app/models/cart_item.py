@@ -1,7 +1,14 @@
 from decimal import Decimal
 
-from sqlalchemy import Integer, ForeignKey, Numeric
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    Integer,
+    ForeignKey,
+    Numeric
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+)
 
 from app.db.base import Base
 

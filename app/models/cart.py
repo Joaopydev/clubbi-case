@@ -1,8 +1,19 @@
 from enum import Enum
-from datetime import datetime, timezone
+from datetime import (
+    datetime,
+    timezone
+)
 
-from sqlalchemy import Integer, ForeignKey, Enum as SQLEnum, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    Integer,
+    ForeignKey,
+    Enum as SQLEnum,
+    DateTime,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+)
 
 from app.db.base import Base
 

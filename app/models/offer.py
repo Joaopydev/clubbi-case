@@ -1,8 +1,16 @@
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, ForeignKey, Numeric, Date
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column
+)
+from sqlalchemy import (
+    Integer,
+    ForeignKey,
+    Numeric,
+    Date,
+)
 
 from app.db.base import Base
 
