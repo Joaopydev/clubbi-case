@@ -46,9 +46,6 @@ class CheckoutService:
             raise CartIsEmptyError()
         
         cart.status = CartStatus.CHECKOUT
-        self.session.commit()
-        self.session.refresh(cart)
-
         return cart
     
     def finalize_payment(self, cart_id: int) -> Tuple[Cart, Payment]:
@@ -65,8 +62,7 @@ class CheckoutService:
         )
 
         self.session.add(payment)
-        self.session.commit()
-        self.session.refresh(cart)
+        self.session.flush()
 
         return cart, payment
 

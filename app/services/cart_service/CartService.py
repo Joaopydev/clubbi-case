@@ -45,8 +45,7 @@ class CartService:
         
         new_cart = Cart(client_id=client_id)
         self.session.add(new_cart)
-        self.session.commit()
-        self.session.refresh(new_cart)
+        self.session.flush()
 
         return new_cart
     
@@ -66,10 +65,8 @@ class CartService:
             offer_id=offer.id
         )
         if existing_cart_item:
+
             existing_cart_item.quantity += offer_to_be_added.quantity
-            self.session.commit()
-            self.session.refresh(existing_cart_item)
-            
             return existing_cart_item.cart
         
         cart_item = CartItem(
@@ -80,8 +77,7 @@ class CartService:
         )
 
         self.session.add(cart_item)
-        self.session.commit()
-        self.session.refresh(cart_item)
+        self.session.flush()
         
         return cart_item.cart
     
@@ -102,7 +98,6 @@ class CartService:
         )
 
         self.session.delete(cart_item)
-        self.session.commit()
 
     def _validate_cart_and_cart_item(self, cart_id: int, cart_item_id: int) -> Tuple[Cart, CartItem]:
 

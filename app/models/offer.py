@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Numeric,
     Date,
+    UniqueConstraint,
 )
 
 from app.db.base import Base
@@ -24,3 +25,7 @@ class Offer(Base):
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=Decimal(0.00))
     valid_until: Mapped[date] = mapped_column(Date, index=True)
+
+    __table_args__ = (
+        UniqueConstraint("product_id", "client_id", name="uq_product_client"),
+    )

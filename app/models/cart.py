@@ -31,7 +31,7 @@ class Cart(Base):
     __tablename__ = "carts"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    client_id: Mapped[int] = mapped_column(ForeignKey("customers.id"))
-    status: Mapped[CartStatus] = mapped_column(SQLEnum(CartStatus), default=CartStatus.OPEN)
+    client_id: Mapped[int] = mapped_column(ForeignKey("customers.id"), index=True)
+    status: Mapped[CartStatus] = mapped_column(SQLEnum(CartStatus), index=True, default=CartStatus.OPEN)
     created_at: Mapped[datetime] = mapped_column(DateTime, index=True, default=lambda: datetime.now(timezone.utc))
     items: Mapped[List["CartItem"]] = relationship("CartItem", back_populates="cart", cascade="all, delete-orphan")

@@ -40,5 +40,9 @@ def get_session():
     try:
         db: Session = session()
         yield db
+        db.commit()
+    except:
+        db.rollback()
+        raise
     finally:
         db.close()
