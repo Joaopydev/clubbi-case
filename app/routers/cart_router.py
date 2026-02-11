@@ -6,11 +6,9 @@ from fastapi import (
 
 from app.dependencies.cart_dependencies import get_cart_service
 from app.services.cart_service.CartService import CartService
-from app.schemas.carts_schema import CartSchema
+from app.schemas.cart_schema import CartSchema
 from app.schemas.offers_schema import AddOfferToCart
-from app.schemas.cart_items_schema import (
-    CartItemSchema,
-)
+
 
 cart_router = APIRouter(prefix="/cart")
 
@@ -18,8 +16,9 @@ cart_router = APIRouter(prefix="/cart")
 def create_cart(client_id: int, service: CartService = Depends(get_cart_service)):
 
     return service.create_cart(client_id=client_id)
+
     
-@cart_router.post("/{cart_id}/items", response_model=CartItemSchema)
+@cart_router.post("/{cart_id}/items", response_model=CartSchema)
 def add_offer(cart_id: int, offer: AddOfferToCart, service: CartService = Depends(get_cart_service)):
     
     return service.add_offer_to_cart(

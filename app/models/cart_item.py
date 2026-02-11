@@ -8,6 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
+    relationship,
 )
 
 from app.db.base import Base
@@ -19,6 +20,7 @@ class CartItem(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey("carts.id"))
-    offer_id: Mapped[int] = mapped_column(ForeignKey("offers.id"), unique=True)
+    offer_id: Mapped[int] = mapped_column(ForeignKey("offers.id"))
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     unit_price_snapshot: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=Decimal(0.00))
+    cart: Mapped["Cart"] = relationship("Cart", back_populates="items")

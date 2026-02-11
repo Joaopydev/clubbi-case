@@ -1,3 +1,4 @@
+from typing import List
 from enum import Enum
 from datetime import (
     datetime,
@@ -13,6 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
+    relationship,
 )
 
 from app.db.base import Base
@@ -32,3 +34,4 @@ class Cart(Base):
     client_id: Mapped[int] = mapped_column(ForeignKey("customers.id"))
     status: Mapped[CartStatus] = mapped_column(SQLEnum(CartStatus), default=CartStatus.OPEN)
     created_at: Mapped[datetime] = mapped_column(DateTime, index=True, default=lambda: datetime.now(timezone.utc))
+    items: Mapped[List["CartItem"]] = relationship("CartItem", back_populates="cart", cascade="all, delete-orphan")

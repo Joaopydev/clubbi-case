@@ -1,11 +1,8 @@
 from datetime import date
-from typing import (
-    Optional,
-    Tuple,
-)
+from typing import Tuple
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, or_
 
 from app.schemas.offers_schema import AddOfferToCart
 from app.models.offer import Offer
@@ -14,13 +11,13 @@ from app.models.cart import (
     Cart, 
     CartStatus,
 )
-from app.exceptions.cart_exceptions import (
+from app.exceptions import (
     CartAlreadyExistsError, 
     OfferDoesNotBelongToClientError,
-    CartNotFound,
-    OfferNotFound,
+    CartNotFoundError,
+    OfferNotFoundError,
     ExpiredOfferError,
-    CartItemNotFound,
+    CartItemNotFoundError,
     CartItemDoesNotBelongToCartError,
     InvalidCartStateError,
 )
@@ -37,13 +34,13 @@ class CartService:
     - Handle cart item creation and removal
     """
 
-    def __init__(self, session: Optional[Session] = None):
+    def __init__(self, session: Session):
 
         self.session = session
 
     def create_cart(self, client_id: int) -> Cart:
 
-        if self._check_existing_cart(client_id=client_id):
+        if self._check_existing_cart_in_progress(client_id=client_id):
             raise CartAlreadyExistsError()
         
         new_cart = Cart(client_id=client_id)
@@ -53,7 +50,7 @@ class CartService:
 
         return new_cart
     
-    def add_offer_to_cart(self, cart_id: int, offer_to_be_added: AddOfferToCart) -> CartItem:
+    def add_offer_to_cart(self, cart_id: int, offer_to_be_added: AddOfferToCart) -> Cart:
 
         # Quantity validation (greater than zero) is handled at the Pydantic schema level.
         # In a production scenario, this rule could also be enforced at the service layer
@@ -73,7 +70,7 @@ class CartService:
             self.session.commit()
             self.session.refresh(existing_cart_item)
             
-            return existing_cart_item
+            return existing_cart_item.cart
         
         cart_item = CartItem(
             cart_id=cart.id,
@@ -86,7 +83,7 @@ class CartService:
         self.session.commit()
         self.session.refresh(cart_item)
         
-        return cart_item
+        return cart_item.cart
     
     def remove_offer_from_cart(self, cart_id: int, cart_item_id: int) -> None:
 
@@ -109,7 +106,7 @@ class CartService:
 
     def _validate_cart_and_cart_item(self, cart_id: int, cart_item_id: int) -> Tuple[Cart, CartItem]:
 
-        cart = self._validate_cart(
+        cart = self.validate_cart(
             cart_id=cart_id,
             require_open=True,
         )
@@ -124,7 +121,7 @@ class CartService:
             # Inventory validation is not implemented because stock control
             # is outside the scope of this technical challenge.
             
-            cart = self._validate_cart(
+            cart = self.validate_cart(
                 cart_id=cart_id,
                 require_open=True,
             )
@@ -135,11 +132,11 @@ class CartService:
             
             return cart, offer
     
-    def _validate_cart(self, cart_id: int, require_open: bool = False) -> Cart:
+    def validate_cart(self, cart_id: int, require_open: bool = False) -> Cart:
 
         cart = self.session.get(Cart, cart_id)
         if not cart:
-            raise CartNotFound(f"Cart with id {cart_id} not found.")
+            raise CartNotFoundError(f"Cart with id {cart_id} not found.")
         
         if require_open and cart.status != CartStatus.OPEN:
             raise InvalidCartStateError(f"Cart is in '{cart.status.value}' state and cannot be modified.")
@@ -150,7 +147,7 @@ class CartService:
 
         offer = self.session.get(Offer, offer_id)
         if not offer:
-            raise OfferNotFound(f"Offer with id {offer_id} not found.")
+            raise OfferNotFoundError(f"Offer with id {offer_id} not found.")
         
         if offer.valid_until < date.today():
             raise ExpiredOfferError()
@@ -161,7 +158,7 @@ class CartService:
         
         cart_item = self.session.get(CartItem, cart_item_id)
         if not cart_item:
-            raise CartItemNotFound()
+            raise CartItemNotFoundError()
         
         return cart_item
     
@@ -176,13 +173,16 @@ class CartService:
         )
         return self.session.scalars(query).first()
         
-    def _check_existing_cart(self, client_id: int):
+    def _check_existing_cart_in_progress(self, client_id: int):
 
         query = (
             select(Cart)
             .where(
-                Cart.client_id == client_id, 
-                Cart.status == CartStatus.OPEN
+                Cart.client_id == client_id,
+                or_(
+                    Cart.status == CartStatus.OPEN,
+                    Cart.status == CartStatus.CHECKOUT
+                ) 
             )
         )
         return self.session.scalars(query).first()

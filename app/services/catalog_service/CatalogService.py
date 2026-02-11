@@ -1,7 +1,4 @@
-from typing import (
-    Optional,
-    List,
-)
+from typing import List
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -23,7 +20,7 @@ class CatalogService:
     This service does not modify data and contains no business state transitions.
     """
     
-    def __init__(self, session: Optional[Session] = None):
+    def __init__(self, session: Session):
 
         self.session = session
 

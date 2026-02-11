@@ -21,8 +21,6 @@ from app.db.base import Base
 
 
 class PaymentStatus(Enum):
-    OPEN: str = "open"
-    CHECKOUT: str = "checkout"
     PAID: str = "paid"
 
 
@@ -32,6 +30,6 @@ class Payment(Base):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey("carts.id"))
-    status: Mapped[PaymentStatus] = mapped_column(SQLEnum(PaymentStatus), default=PaymentStatus.OPEN)
+    status: Mapped[PaymentStatus] = mapped_column(SQLEnum(PaymentStatus))
     amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=Decimal(0.00))
     created_at: Mapped[datetime] = mapped_column(DateTime, index=True, default=lambda: datetime.now(timezone.utc))
