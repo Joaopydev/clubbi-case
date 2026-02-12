@@ -81,7 +81,7 @@ class CartService:
         
         return cart_item.cart
     
-    def remove_offer_from_cart(self, cart_id: int, cart_item_id: int) -> None:
+    def remove_offer_from_cart(self, cart_id: int, cart_item_id: int) -> Cart:
 
         """
         Removes a cart item entirely from the cart.
@@ -92,12 +92,14 @@ class CartService:
         the item is completely deleted.
         """
 
-        _, cart_item = self._validate_cart_and_cart_item(
+        cart, cart_item = self._validate_cart_and_cart_item(
             cart_id=cart_id,
             cart_item_id=cart_item_id
         )
 
         self.session.delete(cart_item)
+
+        return cart
 
     def _validate_cart_and_cart_item(self, cart_id: int, cart_item_id: int) -> Tuple[Cart, CartItem]:
 
