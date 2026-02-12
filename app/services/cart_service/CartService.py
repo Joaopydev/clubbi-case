@@ -98,6 +98,7 @@ class CartService:
         )
 
         self.session.delete(cart_item)
+        self.session.flush()
 
         return cart
 

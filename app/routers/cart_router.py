@@ -27,7 +27,7 @@ def add_offer(cart_id: int, offer: AddOfferToCart, service: CartService = Depend
     )
 
 
-@cart_router.delete("/{cart_id}/items/{cart_item_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=CartSchema)
+@cart_router.delete("/{cart_id}/items/{cart_item_id}", response_model=CartSchema)
 def remove_offer(cart_id: int, cart_item_id: int, service: CartService = Depends(get_cart_service)):
 
     return service.remove_offer_from_cart(

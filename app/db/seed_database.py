@@ -188,9 +188,15 @@ def seed_data():
                 variation = random.uniform(0.85, 1.15)
                 unit_price = round(base_price * variation, 2)
                 
-                # Validade entre 30 e 90 dias
-                days_valid = random.randint(30, 90)
-                valid_until = datetime.now() + timedelta(days=days_valid)
+                # 20% das ofertas serão expiradas
+                if random.random() < 0.2:
+                    # Oferta expirada entre 1 e 30 dias atrás
+                    days_expired = random.randint(1, 30)
+                    valid_until = datetime.now() - timedelta(days=days_expired)
+                else:
+                    # Oferta válida entre 30 e 90 dias no futuro
+                    days_valid = random.randint(30, 90)
+                    valid_until = datetime.now() + timedelta(days=days_valid)
                 
                 offer = Offer(
                     product_id=product.id,
